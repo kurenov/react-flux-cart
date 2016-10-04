@@ -30,10 +30,11 @@ var FluxCartActions = {
   },
 
   // Remove item from cart
-  removeFromCart: function (sku) {
+  removeFromCart: function (sku, quantity) {
     AppDispatcher.handleAction({
       actionType: FluxCartConstants.CART_REMOVE,
-      sku: sku
+      sku: sku,
+      quantity:  quantity
     })
   },
 
@@ -44,7 +45,7 @@ var FluxCartActions = {
       cartVisible: cartVisible
     })
   }
-
+  
 };
 
 module.exports = FluxCartActions;

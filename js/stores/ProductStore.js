@@ -4,23 +4,36 @@ var FluxCartConstants = require('../constants/FluxCartConstants');
 var _ = require('underscore');
 
 // Define initial data points
-var _product = {}, _selected = null;
+var _products = [], _selected = null;
 
 // Method to load product data from mock API
 function loadProductData(data) {
-  _product = data[0];
+  console.log('data', data);
+  _products = data;
   _selected = data[0].variants[0];
 }
 
-// Method to set the currently selected product variation
-function setSelected(index) {
-  _selected = _product.variants[index];
+function restoreProductQuantity(sku, quantity) {
+  if (sku && quantity > 0) {
+    for (var i in _products) {
+      var product = _products[i];
+      if (product.variants && product.variants.length) {
+        for (var j in product.variants) {
+          var variant = product.variants[j];
+          if (variant.sku == sku) {
+            variant.inventory += quantity;
+          }
+        }
+      }
+    }
+  }
 }
+
 // Extend ProductStore with EventEmitter to add eventing capabilities
 var ProductStore = _.extend({}, EventEmitter.prototype, {
   // Return Product data
-  getProduct: function () {
-    return _product;
+  getProducts: function () {
+    return _products;
   },
   // Return selected Product
   getSelected: function () {
@@ -51,7 +64,10 @@ AppDispatcher.register(function (payload) {
       break;
     // Respond to SELECT_PRODUCT action
     case FluxCartConstants.SELECT_PRODUCT:
-      setSelected(action.data);
+      //just update products
+      break;
+    case FluxCartConstants.CART_REMOVE:
+      restoreProductQuantity(action.sku, action.quantity);
       break;
     default:
       return true;

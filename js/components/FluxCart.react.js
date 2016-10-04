@@ -16,13 +16,18 @@ var FluxCart = React.createClass({
 
   // Remove item from Cart via Actions
   removeFromCart: function (sku) {
-    FluxCartActions.removeFromCart(sku);
-    FluxCartActions.updateCartVisible(false);
+    console.log('>>>', this.props.products[sku]);
+    FluxCartActions.removeFromCart(sku, this.props.products[sku].quantity);
+    if (!Object.keys(this.props.products).length) {
+      FluxCartActions.updateCartVisible(false);
+    }
+
   },
 
   // Render cart view
   render: function () {
-    var self = this, products = this.props.products;
+    var self = this,
+    products = this.props.products;
     return (
       <div className={"flux-cart " + (this.props.visible ? 'active' : '')}>
         <div className="mini-cart">

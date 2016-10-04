@@ -37,13 +37,17 @@ section#flux-cart {
     background: white;
 }
 
-.flux-product img {
-    width: 50%;
+.flux-product-image-box {
+  width: 50%;
+}
 
+.flux-product img {
+
+    max-height: 270px;
     border: 2px solid #ddd;
 }
 
-.flux-product img,
+.flux-product-image-box,
 .flux-product-detail {
     display: inline-block;
 

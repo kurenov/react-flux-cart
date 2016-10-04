@@ -1,15 +1,24 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
 var FluxCartConstants = require('../constants/FluxCartConstants');
+var FluxCartActions = require('../actions/FluxCartActions');
 var _ = require('underscore');
 
 // Define initial data points
-var _products = {}, _cartVisible = false;
+var _products = {},
+  _cartVisible = false;
 
 // Add product to cart
 function add(sku, update) {
-  update.quantity = sku in _products ? _products[sku].quantity + 1 : 1;
-  _products[sku] = _.extend({}, _products[sku], update)
+  var found = _products[sku];
+
+  if (found) {
+    found.quantity = found.quantity > 0 ? found.quantity + 1 : 1;
+  }
+  else {
+    _products[sku] = update;
+    _products[sku].quantity = 1;
+  }
 }
 
 // Set cart visibility
@@ -35,7 +44,7 @@ var CartStore = _.extend({}, EventEmitter.prototype, {
   // Return cart cost total
   getCartTotal: function () {
     var total = 0;
-    for (product in _products) {
+    for (var product in _products) {
       if (_products.hasOwnProperty(product)) {
         total += _products[product].price * _products[product].quantity;
       }
@@ -75,6 +84,7 @@ AppDispatcher.register(function (payload) {
       break;
     // Respond to CART_REMOVE action
     case FluxCartConstants.CART_REMOVE:
+      ///AppDispatcher.waitFor
       removeItem(action.sku);
       break;
     default:
